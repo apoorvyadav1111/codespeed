@@ -8,7 +8,7 @@ const HomePageLayout = ({
     return (
         <div className="h-full dark:bg-[#151515 dark:text-green-300">
             <Navbar />
-            <main className="h-full pt-40">
+            <main className="pt-40">
                 {children}
             </main>
         </div>

@@ -1,0 +1,24 @@
+{
+    "lang":[
+        {
+            "name":"Python",
+            "folder":"python"
+        },
+        {
+            "name":"Java",
+            "folder":"java"
+        },
+        {
+            "name":"C++",
+            "folder":"cpp"
+        },
+        {
+            "name":"C",
+            "folder":"c"
+        },
+        {
+            "name":"Rust",
+            "folder":"rust"
+        }
+    ]
+}

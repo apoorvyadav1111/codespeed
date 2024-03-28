@@ -12,33 +12,8 @@ const Navbar = () => {
             >
                 codespeed
             </Button>
-            <div className="flex justify-end gap-x-1">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm">
-                            <span>Select Language</span>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuItem>
-                            Python
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            Java
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            C
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            Rust
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            C++
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-                <ModeToggle />
-            </div>
+
+            <ModeToggle />
         </div>
       );
 }
