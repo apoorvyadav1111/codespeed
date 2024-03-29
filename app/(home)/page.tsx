@@ -46,7 +46,7 @@ const HomePage = () => {
       }
       {
         isTesting && (
-          <div className="">
+          <div>
             <Test language={lang}/>
           </div>
         )
