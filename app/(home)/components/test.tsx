@@ -5,12 +5,16 @@ import { Spinner } from "@/components/spinner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { RotateCcwIcon } from "lucide-react";
+import { RotateCcwIcon, XIcon } from "lucide-react";
+import HelpTooltip from "@/components/helptoottip";
+import { useRouter } from "next/navigation";
+
 interface TestProps{
     language: string
 }
 
 const Test = ({language}:TestProps) => {
+    const router = useRouter();
     const [code,setCode] = useState([] as string[]);
     const [difficulty, setDifficulty] = useState('easy');
     const [isLoading, setIsLoading] = useState(true);
@@ -101,10 +105,18 @@ const Test = ({language}:TestProps) => {
         setIsCompleted(false);
     }
 
+    const abort = () => {
+        // go back to home
+        console.log('abort');
+        window.location.reload();
+    }
     return (
         <>
         {
-            isLoading ? (<Spinner size="lg"/>):(
+            isLoading && <Spinner size="lg"/> 
+        }
+        {
+            !isLoading && !isCompleted && (
                 <>
                 <div className="absolute top-[25%] left-[25%] min-w-[50%] p-4 rounded dark:text-gray-200 text-gray-800 gap-y-10">
                     {/* easy and hard mode represented as EASY | HARD */}
@@ -130,9 +142,7 @@ const Test = ({language}:TestProps) => {
                                 return <span key={i} className={getCharClass(i, char)}>{char}</span>
                             })}
                         </div>
-                        <br/>
-                        <br/>
-                        <span className="text-m opacity-70">{nextLine}</span>
+                        <span className="text-sm opacity-70">{nextLine}</span>
                     </pre>
                     <Input 
                         autoFocus
@@ -142,25 +152,69 @@ const Test = ({language}:TestProps) => {
                         onKeyDown={(e)=>handleKeyDown(e)}
                     />
                 </div>
-                <div className="absolute w-[80%] left-[10%] bottom-[10%] items-center justify-center">
-                <hr className="border-t-2 border-gray-200 dark:border-gray-700"/>
-                    <Button 
-                        onClick={()=>restart()}
-                        variant="ghost"
-                        size="sm"
-                    >
-                        <RotateCcwIcon className="w-4 h-4"/>
-                    </Button>
-                      {/* Horizontal line */}
-                    {/* Analytics */}
-                    {line.length} {input.length} {lineIdx} {code.length} {isCompleted.toString()}
-                </div>
-              
                 </>
             )
         }
         {
-
+            isCompleted && (
+            <>
+            <div className="absolute top-[25%] left-[25%] min-w-[50%] p-4 rounded dark:text-gray-200 text-gray-800 gap-y-10">
+                <div className="text-2xl text-center">
+                    <h1>Test Completed</h1>
+                    <Button 
+                        onClick={()=>restart()}
+                        variant="ghost"
+                        size="sm"
+                    >Restart</Button>
+                </div>
+            </div>
+            </>
+            )
+        }
+        {
+            !isLoading && !isCompleted && (
+            <>
+            <div className="absolute w-[80%] left-[10%] bottom-[10%] items-center justify-center">
+                <hr className="border-t-1 border-gray-200 dark:border-gray-700"/>
+                    <div className="flex">
+                        <HelpTooltip text="Restart the test">
+                            <Button 
+                                onClick={()=>restart()}
+                                variant="ghost"
+                                size="sm"
+                            >
+                                <RotateCcwIcon className="w-4 h-4"/>
+                            </Button>
+                        </HelpTooltip>
+                        <HelpTooltip text="Abort">
+                            <Button 
+                                onClick={()=>abort()}
+                                variant="ghost"
+                                size="sm"
+                            >
+                                <XIcon className="w-4 h-4"/>
+                            </Button>
+                        </HelpTooltip>
+                        <HelpTooltip text="Current index of the line">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-sm"
+                                >{input.length}/{line.length}
+                            </Button>
+                        </HelpTooltip>
+                        <HelpTooltip text="Line number of the code">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-sm"
+                                >{lineIdx}/{code.length}
+                            </Button>
+                        </HelpTooltip>
+                    </div>
+                </div>
+                </>
+            )
         }
         </>
     );

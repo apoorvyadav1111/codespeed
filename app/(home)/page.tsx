@@ -33,8 +33,8 @@ const HomePage = () => {
               <Button 
                 onClick={()=>loadTest()}
                 size="sm" 
-                variant="outline" 
-                className="border-none p-2 m-2 rounded-full">
+                variant="ghost" 
+                className="border-none p-2 m-2 rounded-full hover:bg-transparent">
                 Start Test &nbsp;
                 <CornerDownLeft />
               </Button>
