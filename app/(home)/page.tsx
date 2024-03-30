@@ -1,9 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Menu from "./components/menu";
-import { ArrowRight, CornerDownLeft } from "lucide-react";
+import { CornerDownLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/spinner";
 import Test from "./components/test";
 
 
@@ -19,17 +18,35 @@ const HomePage = () => {
     setIsTesting(true);
   }
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const focusInput = () => {
+    inputRef.current?.focus();
+  }
+
+  const loadTestOnEnter = () => {
+    if (isTesting) {
+      return;
+    }
+    return (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        loadTest();
+      }
+    }
+  }
+
   return (
-    <div className="flex flex-col items-center justify-between p-24">
+    <div onClick={focusInput} onKeyDown={loadTestOnEnter()} className="min-h-screen flex flex-col items-center justify-center">
       {
         !isTesting &&
         (
-          <p>
+          <div className="flex flex-col">
+            <p>
           I want to practice typing for
           <Menu onSelect={onSelect}/>
+            </p>
           {
             lang !=="" && (
-            <div className="flex justify-center w-full items-center">
               <Button 
                 onClick={()=>loadTest()}
                 size="sm" 
@@ -38,16 +55,15 @@ const HomePage = () => {
                 Start Test &nbsp;
                 <CornerDownLeft />
               </Button>
-            </div>
             )
           }
-          </p>
+          </div>
         )
       }
       {
         isTesting && (
           <div>
-            <Test language={lang}/>
+            <Test inputRef={inputRef} focusInput={focusInput} language={lang}/>
           </div>
         )
 

@@ -1,20 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Spinner } from "@/components/spinner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RotateCcwIcon, XIcon } from "lucide-react";
 import HelpTooltip from "@/components/helptoottip";
-import { useRouter } from "next/navigation";
 
 interface TestProps{
-    language: string
+    language: string;
+    inputRef: React.RefObject<HTMLInputElement>;
+    focusInput: ()=>void;
 }
 
-const Test = ({language}:TestProps) => {
-    const router = useRouter();
+const Test = ({language, inputRef, focusInput}:TestProps) => {
     const [code,setCode] = useState([] as string[]);
     const [difficulty, setDifficulty] = useState('easy');
     const [isLoading, setIsLoading] = useState(true);
@@ -23,6 +23,7 @@ const Test = ({language}:TestProps) => {
     const [nextLine, setNextLine] = useState('');
     const [input, setInput] = useState('');
     const [isCompleted, setIsCompleted] = useState(false);
+    const [timer, setTimer] = useState(0);
     
 
     const getCode = async () => {
@@ -47,7 +48,7 @@ const Test = ({language}:TestProps) => {
         }else{
             setNextLine('');
         }
-
+        setTimer(0);
     },[code]);
 
     useEffect(()=>{
@@ -83,13 +84,16 @@ const Test = ({language}:TestProps) => {
     }
 
     const getCharColor = (idx:number, char: string) => {
+        if(idx === input.length){ 
+            return 'text-blue-600 dark:text-yellow-200 border-blue-600 dark:border-yellow-200';
+        }
         if (idx < input.length){
-            return char === input[idx] ? 'border-green-500 text-green-500 dark:text-green-300 dark:border-green-300' : 'border-red-500 text-red-500 dark:text-red-400 dark:border-red-400';
+            return char === input[idx] ? 'text-green-500 dark:text-green-300' : 'text-red-500 dark:text-red-400';
         }
         return '';
     }
     const spaceClassUnderline = (char: string) => {
-        return char === ' ' ? 'border-dashed border-b-2  border-gray-100  dark:border-gray-700' : '';
+        return char === ' ' ? 'border-dotted border-b-2 border-gray-300 dark:border-gray-400' : '';
     }
 
     const getCharClass = (idx:number, char: string) => {
@@ -101,15 +105,25 @@ const Test = ({language}:TestProps) => {
     }
 
     const restart = () => {
+        setTimer(0);
         setLineIdx(0);
         setIsCompleted(false);
     }
 
     const abort = () => {
         // go back to home
-        console.log('abort');
         window.location.reload();
     }
+
+    useEffect(()=>{
+        if(!isCompleted){
+            const interval = setInterval(()=>{
+                setTimer(timer => timer+1);
+            },1000);
+            return ()=>clearInterval(interval);
+        }
+    },[isCompleted]);
+
     return (
         <>
         {
@@ -118,7 +132,7 @@ const Test = ({language}:TestProps) => {
         {
             !isLoading && !isCompleted && (
                 <>
-                <div className="absolute top-[25%] left-[25%] min-w-[50%] p-4 rounded dark:text-gray-200 text-gray-800 gap-y-10">
+                <div onClick={focusInput} className="absolute top-[25%] left-[25%] min-w-[50%] p-4 rounded dark:text-gray-200 text-gray-800 gap-y-10">
                     {/* easy and hard mode represented as EASY | HARD */}
                     <div className="text-2xl text-center">
                         <Button 
@@ -150,6 +164,7 @@ const Test = ({language}:TestProps) => {
                         value={input}
                         onChange={(e)=>setInput(e.target.value)}
                         onKeyDown={(e)=>handleKeyDown(e)}
+                        ref={inputRef}
                     />
                 </div>
                 </>
@@ -165,7 +180,22 @@ const Test = ({language}:TestProps) => {
                         onClick={()=>restart()}
                         variant="ghost"
                         size="sm"
+                        className="text-yellow-500 dark:text-yellow-300"
                     >Restart</Button>
+                    <Button 
+                        onClick={()=>abort()}
+                        variant="ghost"
+                        size="sm"
+                        className="text-green-500 dark:text-green-300"
+                    >Home</Button>
+                </div>
+                <div className="w-[200px] items-center justify-between">
+                    <p>Time taken: {timer}s</p>
+                    <p>Difficulty: {difficulty}</p>
+                    <p>Characters: </p>
+                    <p>Correct: {input.length}</p>
+                    <p>Incorrect: {line.length-input.length}</p>
+                    <p>Accuracy: {((input.length/line.length)*100).toFixed(2)}%</p>
                 </div>
             </div>
             </>
@@ -209,6 +239,14 @@ const Test = ({language}:TestProps) => {
                                 size="sm"
                                 className="text-sm"
                                 >{lineIdx}/{code.length}
+                            </Button>
+                        </HelpTooltip>
+                        <HelpTooltip text="Time elapsed">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-sm"
+                                >{timer}s
                             </Button>
                         </HelpTooltip>
                     </div>
