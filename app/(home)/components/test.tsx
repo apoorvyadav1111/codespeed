@@ -90,16 +90,20 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
             return 'underline text-blue-600 dark:text-yellow-200 border-blue-600 dark:border-yellow-200';
         }
         if (idx < input.length){
-            return char === input[idx] ? 'text-green-500 dark:text-green-300 border-green-500 dark:border-green-300' : 'text-red-500 dark:text-red-400 border-red-500 dark:border-red-400';
+            return char === input[idx] ? 'border-green-500 dark:border-green-300 text-green-500 dark:text-green-300 ' : 'border-red-500 dark:border-red-400 text-red-500 dark:text-red-400';
         }
         return '';
     }
-    const spaceClassUnderline = (char: string) => {
-        return char === ' ' ? 'border-dotted border-b-2 border-gray-300 dark:border-gray-400' : '';
+    const spaceClassUnderline = (idx:number,char: string) => {
+        if(idx < input.length){
+            return char === ' ' ? 'border-dotted border-b-2' : '';
+        }else{
+            return char ===' ' ? 'border-dotted border-b-2 border-gray-200 dark:border-gray-600' : '';
+        }
     }
 
     const getCharClass = (idx:number, char: string) => {
-        return `${getCharColor(idx,char)} ${spaceClassUnderline(char)}`;
+        return ` ${spaceClassUnderline(idx, char)} ${getCharColor(idx,char)} `;
     }
 
     const setMode = (mode:string) => {
