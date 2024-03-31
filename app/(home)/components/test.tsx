@@ -5,7 +5,7 @@ import { Spinner } from "@/components/spinner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { RotateCcwIcon, XIcon } from "lucide-react";
+import { Home, RotateCcwIcon, XIcon } from "lucide-react";
 import HelpTooltip from "@/components/helptoottip";
 
 interface TestProps{
@@ -241,13 +241,13 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
                                 <RotateCcwIcon className="w-4 h-4"/>
                             </Button>
                         </HelpTooltip>
-                        <HelpTooltip text="Abort">
+                        <HelpTooltip text="Go home">
                             <Button 
                                 onClick={()=>abort()}
                                 variant="ghost"
                                 size="sm"
                             >
-                                <XIcon className="w-4 h-4"/>
+                                <Home className="w-4 h-4"/>
                             </Button>
                         </HelpTooltip>
                         <HelpTooltip text="Current index of the line">

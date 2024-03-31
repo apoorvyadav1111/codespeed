@@ -7,7 +7,7 @@ const HomePageLayout = ({
     children: React.ReactNode
 }) => {
     return (
-        <div className="bg-wheat dark:bg-[#1f1f1f] dark:text-green-300">
+        <div className="dark:text-green-300">
             <Navbar />
             {children}
             <Footer />
