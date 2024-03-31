@@ -40,7 +40,7 @@ const HomePage = () => {
       {
         !isTesting &&
         (
-          <div className="flex flex-col">
+          <div className="text-2xl flex flex-col">
             <p>
           I want to practice typing for
           <Menu onSelect={onSelect}/>

@@ -20,7 +20,7 @@ const Menu = (
     return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="pl-2 border-none underline hover:bg-transparent" size="lg">
+              <Button variant="ghost" className="text-2xl pl-2 border-none underline hover:bg-transparent" size="lg">
                   {
                     lang === ''? 'Language' : lang
                   }
