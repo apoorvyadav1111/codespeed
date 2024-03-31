@@ -24,7 +24,8 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
     const [input, setInput] = useState('');
     const [isCompleted, setIsCompleted] = useState(false);
     const [timer, setTimer] = useState(0);
-    
+    const [chars, setChars] = useState(0);
+    const [cpm, setCpm] = useState(0);
 
     const getCode = async () => {
         // fetch random code snippet from api
@@ -64,6 +65,7 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
 
     const handleKeyDown = (e:React.KeyboardEvent<HTMLInputElement>) => {
         e.stopPropagation();
+        setChars(chars => chars+1);
         if(e.key === 'Enter'){
             if(input.length >= line.length){
                 if (lineIdx === code.length-1){
@@ -85,10 +87,10 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
 
     const getCharColor = (idx:number, char: string) => {
         if(idx === input.length){ 
-            return 'text-blue-600 dark:text-yellow-200 border-blue-600 dark:border-yellow-200';
+            return 'underline text-blue-600 dark:text-yellow-200 border-blue-600 dark:border-yellow-200';
         }
         if (idx < input.length){
-            return char === input[idx] ? 'text-green-500 dark:text-green-300' : 'text-red-500 dark:text-red-400';
+            return char === input[idx] ? 'text-green-500 dark:text-green-300 border-green-500 dark:border-green-300' : 'text-red-500 dark:text-red-400 border-red-500 dark:border-red-400';
         }
         return '';
     }
@@ -123,6 +125,13 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
             return ()=>clearInterval(interval);
         }
     },[isCompleted]);
+
+    useEffect(()=>{
+        if(timer>0){
+            setCpm((chars/timer)*60);
+        }
+    },[timer]);
+
 
     return (
         <>
@@ -189,13 +198,25 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
                         className="text-green-500 dark:text-green-300"
                     >Home</Button>
                 </div>
-                <div className="w-[200px] items-center justify-between">
-                    <p>Time taken: {timer}s</p>
-                    <p>Difficulty: {difficulty}</p>
-                    <p>Characters: </p>
-                    <p>Correct: {input.length}</p>
-                    <p>Incorrect: {line.length-input.length}</p>
-                    <p>Accuracy: {((input.length/line.length)*100).toFixed(2)}%</p>
+                <div className="flex flex-col items-center justify-center">
+                    <div className="flex justify-between w-full">
+                        <p>Time taken:</p><p> {timer}s</p>
+                    </div>
+                    <div className="flex justify-between w-full">
+                        <p>Keystrokes per minute:</p><p> {cpm.toFixed(2)} KPM</p>
+                    </div>
+                    <div className="flex justify-between w-full">
+                        <p>Code lines per minute:</p><p> {(((lineIdx+1)/timer)*60).toFixed(2)} LPM</p>
+                    </div>
+                    <div className="flex justify-between w-full">
+                        <p>Difficulty:</p><p> {difficulty.toLocaleUpperCase()}</p>
+                    </div>
+                    <div className="flex justify-between w-full">
+                        <p>Characters:</p><p> {chars}</p>
+                    </div>
+                    <div className="flex justify-between w-full">
+                        <p>Lines:</p><p> {code.length}</p>
+                    </div>
                 </div>
             </div>
             </>
@@ -239,6 +260,22 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
                                 size="sm"
                                 className="text-sm"
                                 >{lineIdx}/{code.length}
+                            </Button>
+                        </HelpTooltip>
+                        <HelpTooltip text="keystrokes per minute">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-sm"
+                                >{cpm.toFixed(2)} KPM
+                            </Button>
+                        </HelpTooltip>
+                        <HelpTooltip text="codelines per minute">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-sm"
+                                >{(((lineIdx+1)/timer)*60).toFixed(2)} LPM
                             </Button>
                         </HelpTooltip>
                         <HelpTooltip text="Time elapsed">
