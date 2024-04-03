@@ -28,9 +28,9 @@ const Footer = () => {
                         </Button>
                     </div>
                     <div>
-                        <p><b>codespeed</b> Made by &nbsp;
+                        <p><b>codespeed</b>&nbsp;
                             <a href="https://apoorvyadav.vercel.app" target="_blank">
-                                Apoorv Yadav
+                            Made by Apoorv Yadav
                             </a> in 2024</p>
                     </div>
                     <div> | </div>
