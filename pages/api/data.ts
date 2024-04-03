@@ -20,6 +20,7 @@ export default async (req:NextApiRequest, res:NextApiResponse) => {
     const { folder } = req.query;
     
     const lang = folder as string;
+    console.log(lang);
     if (!lang2folder[lang]) {
         res.status(400).json({ error: 'Invalid language' });
         return;

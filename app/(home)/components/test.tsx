@@ -5,8 +5,9 @@ import { Spinner } from "@/components/spinner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Home, RotateCcwIcon, XIcon } from "lucide-react";
+import { Home, RotateCcwIcon } from "lucide-react";
 import HelpTooltip from "@/components/helptoottip";
+import useSound from "use-sound";
 
 interface TestProps{
     language: string;
@@ -27,9 +28,12 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
     const [chars, setChars] = useState(0);
     const [cpm, setCpm] = useState(0);
 
+    const [correct, setCorrect] = useState(0);
+    const [incorrect, setIncorrect] = useState(0);
+    
     const getCode = async () => {
         // fetch random code snippet from api
-        const res = await fetch(`/api/data?folder=${language}`);
+        const res = await fetch(`/api/data?folder=${encodeURIComponent(language)}`);
         const data = await res.json();
         const lines = data.code.replace('\t','').split('\n').filter((line:string)=>line!=='').map((line:string)=>line.trim());
         setCode(lines);
@@ -68,6 +72,13 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
         setChars(chars => chars+1);
         if(e.key === 'Enter'){
             if(input.length >= line.length){
+                for(let i=0;i<line.length;i++){
+                    if(input[i] === line[i]){
+                        setCorrect(correct => correct+1);
+                    }else{
+                        setIncorrect(incorrect => incorrect+1);
+                    }
+                }
                 if (lineIdx === code.length-1){
                     setIsCompleted(true);
                 }else{
@@ -113,6 +124,10 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
     const restart = () => {
         setTimer(0);
         setLineIdx(0);
+        setChars(0);
+        setCorrect(0);
+        setIncorrect(0);
+        setCpm(0);
         setIsCompleted(false);
     }
 
@@ -210,7 +225,7 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
                         <p>Keystrokes per minute:</p><p> {cpm.toFixed(2)} KPM</p>
                     </div>
                     <div className="flex justify-between w-full">
-                        <p>Code lines per minute:</p><p> {(((lineIdx+1)/timer)*60).toFixed(2)} LPM</p>
+                        <p>Code lines per minute:</p><p> {timer!==0?(((lineIdx)/timer)*60).toFixed(2):0} LPM</p>
                     </div>
                     <div className="flex justify-between w-full">
                         <p>Difficulty:</p><p> {difficulty.toLocaleUpperCase()}</p>
@@ -220,6 +235,15 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
                     </div>
                     <div className="flex justify-between w-full">
                         <p>Lines:</p><p> {code.length}</p>
+                    </div>
+                    <div className="flex justify-between w-full">
+                        <p>Correct:</p><p> {correct}</p>
+                    </div>
+                    <div className="flex justify-between w-full">
+                        <p>Incorrect:</p><p> {incorrect}</p>
+                    </div>
+                    <div className="flex justify-between w-full">
+                        <p>Accuracy:</p><p> {((correct/(correct+incorrect))*100).toFixed(2)}%</p>
                     </div>
                 </div>
             </div>
@@ -288,6 +312,14 @@ const Test = ({language, inputRef, focusInput}:TestProps) => {
                                 size="sm"
                                 className="text-sm"
                                 >{timer}s
+                            </Button>
+                        </HelpTooltip>
+                        <HelpTooltip text="Correct / Incorrect">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-sm"
+                                >{correct}/{incorrect}
                             </Button>
                         </HelpTooltip>
                     </div>
